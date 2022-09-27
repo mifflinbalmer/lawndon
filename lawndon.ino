@@ -3,19 +3,12 @@
 #include <Arduino.h>
 #endif
 
-#include "flysky.h"
-#include <IBusBM.h>
-
-static IBusBM ibus;
+#include "config.h"
 
 void setup() {
-  // Start serial monitor
-  Serial.begin(115200);
-
-  // Attach iBus object to serial port
-  ibus.begin(Serial1);
+  drive.setup();
 }
 
 void loop() {
-  Flysky::readSerial(){};
+  drive.loop();
 }

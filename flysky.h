@@ -5,16 +5,18 @@
 
 class Flysky {
 public:
-  IBusBM ibus;
+  String flySkyConfigString = "";
 
   Flysky();
+  virtual void setup();
 
-  static void readSerial();
+  virtual void loop();
 
   virtual int readChannel(byte channelInput, int minLimit, int maxLimit,
                           int defaultValue);
-  virtual bool readSwitch(byte channelInput, bool defaultValue);
-
 };
+
+extern IBusBM ibus;
+extern Flysky flysky;
 
 #endif
