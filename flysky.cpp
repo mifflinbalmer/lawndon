@@ -1,6 +1,9 @@
 #include "flysky.h"
+#include "drive.h"
 #include <Arduino.h>
+#include <stdlib.h>
 
+Drive drive;
 IBusBM ibus;
 Flysky flysky;
 
@@ -22,16 +25,53 @@ int Flysky::readChannel(byte channelInput, int minLimit, int maxLimit,
 void Flysky::setup() {}
 
 void Flysky::loop() {
-  for (byte i = 0; i < 5; i++) {
-    int value = readChannel(i, -100, 100, 0);
-    Serial.print("Ch");
-    Serial.print(i + 1);
-    Serial.print(": ");
-    Serial.print(value);
-    Serial.print(" | ");
-  }
+  flyCH1 = readChannel(0, -100, 100, 0);
+  flyCH2 = readChannel(1, -100, 100, 0);
+  flyCH3 = readChannel(2, 0, 155, 0);
+  flyCH4 = readChannel(3, -100, 100, 0);
+
+  Serial.print("Ch1 = ");
+  Serial.print(flyCH1);
+  Serial.print("Ch2 = ");
+  Serial.print(flyCH2);
+  Serial.print("Ch3 = ");
+  Serial.print(flyCH3);
+  Serial.print("Ch4 = ");
+  Serial.print(flyCH4);
 
   Serial.println();
 
-  delay(10);
+  // set speed
+  driveLeftSpeed = flyCH3;
+  driveRightSpeed = flyCH3;
+
+  // set direction
+  if (flyCH2 >= 0) {
+    driveLeftDir = 1;
+    driveRightDir = 1;
+    Serial.println("-----Forward-----");
+  } else {
+    driveLeftDir = 0;
+    driveRightDir = 0;
+    Serial.println("-----Reverse-----");
+  }
+
+  // add speed
+  driveLeftSpeed += abs(flyCH2);
+  driveRightSpeed += abs(flyCH2);
+
+  // constrain speed
+  driveLeftSpeed = constrain(driveLeftSpeed, 0, 255);
+  driveRightSpeed = constrain(driveRightSpeed, 0, 255);
+
+  // drive motors
+  drive.controlDriveLeftMotor(driveLeftSpeed, driveLeftDir);
+  drive.controlDriveRightMotor(driveRightSpeed, driveRightDir);
+
+  Serial.print("Left speed = ");
+  Serial.print(driveLeftSpeed);
+  Serial.print("Right speed = ");
+  Serial.print(driveRightSpeed);
+
+  delay(50);
 }

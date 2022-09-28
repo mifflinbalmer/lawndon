@@ -4,13 +4,13 @@
 #include <Arduino.h>
 
 // pin defs
-#define leftDirPin 12
-#define leftPwmPin 3
-#define leftBrakePin 9
+#define pinDriveLeftDir 12
+#define pinDriveLeftPwm 3
+#define pinDriveLeftBrake 9
 
-#define rightDirPin 13
-#define rightPwmPin 11
-#define rightBrakePin 8
+#define pinDriveRightDir 13
+#define pinDriveRightPwm 11
+#define pinDriveRightBrake 8
 
 // baudrates
 #define CONSOLE_BAUDRATE 19200
@@ -26,9 +26,8 @@ public:
 
   virtual void setup(void);
 
-  virtual void setDirection(int directionPin, char state);
-  virtual void setBrake(int brakePin, char state);
-  virtual void setWorkDuty(int pwmPin, int value);
+  virtual void controlDriveLeftMotor(int speed, int direction);
+  virtual void controlDriveRightMotor(int speed, int direction);
 };
 
 extern Drive drive;
