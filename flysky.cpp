@@ -25,18 +25,18 @@ int Flysky::readChannel(byte channelInput, int minLimit, int maxLimit,
 void Flysky::setup() {}
 
 void Flysky::loop() {
-  flyCH1 = readChannel(0, -100, 100, 0);
-  flyCH2 = readChannel(1, -100, 100, 0);
-  flyCH3 = readChannel(2, 0, 155, 0);
-  flyCH4 = readChannel(3, -100, 100, 0);
+  flyCH1 = readChannel(0, -100, 100, 0); // yaw | L -> R
+  flyCH2 = readChannel(1, -100, 100, 0); // yaw | Up -> Down
+  flyCH3 = readChannel(2, 0, 155, 0);    // throttle | Up -> Down
+  flyCH4 = readChannel(3, -100, 100, 0); // throttle | L -> R
 
-  Serial.print("Ch1 = ");
+  Serial.print("  |  Ch1 = ");
   Serial.print(flyCH1);
-  Serial.print("Ch2 = ");
+  Serial.print(" | Ch2 = ");
   Serial.print(flyCH2);
-  Serial.print("Ch3 = ");
+  Serial.print(" | Ch3 = ");
   Serial.print(flyCH3);
-  Serial.print("Ch4 = ");
+  Serial.print(" | Ch4 = ");
   Serial.print(flyCH4);
 
   Serial.println();
@@ -56,9 +56,14 @@ void Flysky::loop() {
     Serial.println("-----Reverse-----");
   }
 
-  // add speed
-  driveLeftSpeed += abs(flyCH2);
-  driveRightSpeed += abs(flyCH2);
+  // calculate turning speed
+  if (flyCH1 != 0 && flyCH2 > 0) {
+    driveLeftSpeed += abs(flyCH2 + flyCH1);
+    driveRightSpeed += abs(flyCH2 - flyCH1);
+  } else {
+    driveLeftSpeed += abs(flyCH2);
+    driveRightSpeed += abs(flyCH2);
+  }
 
   // constrain speed
   driveLeftSpeed = constrain(driveLeftSpeed, 0, 255);
@@ -70,7 +75,7 @@ void Flysky::loop() {
 
   Serial.print("Left speed = ");
   Serial.print(driveLeftSpeed);
-  Serial.print("Right speed = ");
+  Serial.print("  |  Right speed = ");
   Serial.print(driveRightSpeed);
 
   delay(50);
